@@ -26,19 +26,14 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\admin\CuponController;
 use App\Http\Controllers\CarruselController;
 use App\Http\Controllers\MercadoPagoController;
+use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\RecetaController;
 use App\Models\Receta;
 
-// Mostrar el carrito
 
 
-// Route::get('/pedido', function () {
-//   return view('cliente.pedido');
-// });
 
-Route::get('/pago', function () {
-  return view('cliente.pago');
-});
 
 // Rutas de Admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -120,7 +115,10 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
   Route::post('/aplicar-cupon', [CarritoController::class, 'aplicarCupon'])->name('aplicar.cupon');
   Route::post('/remover-cupon', [CarritoController::class, 'removerCupon'])->name('cupon.remover');
-
+  Route::get('/ordenes', function () {
+    return view('Admin.ordenes');
+  });
+  
 });
 
 
@@ -137,12 +135,43 @@ Route::middleware('auth', 'role:admin')->group(function () {
 
 // Rutas de perfil para Cliente
 Route::middleware('auth', 'role:cliente')->group(function () {
-  Route::get('/profile/cliente', [ProfileController::class, 'editCliente'])->name('profile_cliente.edit');
-  Route::patch('/profile/cliente', [ProfileController::class, 'updateCliente'])->name('profile_cliente.update');
-  Route::delete('/profile/cliente', [ProfileController::class, 'destroyCliente'])->name('profile_cliente.destroy');
+  Route::get('/cliente/profile', [ProfileController::class, 'editCliente'])
+    ->name('profile_cliente.edit');
 
+  Route::patch('/cliente/profile', [ProfileController::class, 'updateCliente'])
+    ->name('profile_cliente.update');
+
+  Route::delete('/cliente/profile', [ProfileController::class, 'destroyCliente'])
+    ->name('profile_cliente.destroy');
+
+
+  // Ruta para mostrar el pedido
+  Route::get('/pedido', [CarritoController::class, 'mostrarPedido'])->name('pedido');
+
+  // Ruta para crear la preferencia de pago
+  Route::post('/create-preference', [MercadoPagoController::class, 'createPaymentPreference'])->name('create.preference')->middleware('auth');
+
+
+  Route::post('/create-preference', [MercadoPagoController::class, 'createPaymentPreference'])
+  ->name('create.preference');
+  // Rutas de retorno de Mercado Pago
+  Route::get('/mercadopago/success', [MercadoPagoController::class, 'success'])->name('mercadopago.success');
+  Route::get('/mercadopago/failure', [MercadoPagoController::class, 'failure'])->name('mercadopago.failure');
+  Route::get('/mercadopago/pending', [MercadoPagoController::class, 'pending'])->name('mercadopago.pending');
+
+  // (Opcional) Ruta para manejar los webhooks de Mercado Pago
+  Route::post('/webhook/mercadopago', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
+
+ 
 
 });
+
+
+Route::get('/contacto', function () {
+  return view('cliente.contacto');
+});
+
+
 
 
 
@@ -157,9 +186,7 @@ Route::get('/cliente/login', [ClienteAuthController::class, 'showLoginForm'])
   ->name('cliente.login');
 Route::post('/cliente/login', [ClienteAuthController::class, 'login']);
 
-Route::get('/contacto', function () {
-  return view('cliente.contacto');
-});
+
 
 
 
@@ -177,7 +204,6 @@ Route::get('/nosotros', function () {
   return view('cliente.nosotros');
 });
 
-Route::get('/pedido', [CarritoController::class, 'mostrarPedido'])->name('pedido.mostrar');
 
 //publicas
 
@@ -200,19 +226,4 @@ Route::get('/recetass', [RecetaController::class, 'indexCliente'])->name('receta
 
 Route::get('/recetass/{id}', [RecetaController::class, 'showCliente'])->name('recetas.cliente.show');
 
-// Ruta para mostrar el pedido
-Route::get('/pedido', [CarritoController::class, 'mostrarPedido'])->name('pedido')->middleware('auth');
 
-// Ruta para crear la preferencia de pago
-Route::post('/create-preference', [MercadoPagoController::class, 'createPaymentPreference'])->name('create.preference')->middleware('auth');
-
-
-Route::post('/create-preference', [MercadoPagoController::class, 'createPaymentPreference'])
-->name('create.preference');
-// Rutas de retorno de Mercado Pago
-Route::get('/mercadopago/success', [MercadoPagoController::class, 'success'])->name('mercadopago.success');
-Route::get('/mercadopago/failure', [MercadoPagoController::class, 'failure'])->name('mercadopago.failure');
-Route::get('/mercadopago/pending', [MercadoPagoController::class, 'pending'])->name('mercadopago.pending');
-
-// (Opcional) Ruta para manejar los webhooks de Mercado Pago
-Route::post('/webhook/mercadopago', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');

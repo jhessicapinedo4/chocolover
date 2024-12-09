@@ -132,13 +132,13 @@
                                 <div class="mt-6 flex flex-col gap-4">
                                     <a href="{{ route('carrito.mostrar') }}" class="w-full">
                                         <button
-                                            class="w-full rounded-3xl bg-gray-300 px-4 sm:px-6 py-2 sm:py-3 text-lg sm:text-2xl font-medium text-white shadow-sm hover:bg-gray-500 transition-colors">
+                                            class="w-full rounded-3xl bg-gray-300 px-4 sm:px-6 py-3 sm:py-3 text-lg sm:text-2xl font-medium text-white shadow-sm hover:bg-gray-500 transition-colors">
                                             Ver carrito
                                         </button>
                                     </a>
 
                                     <button
-                                        class="boton w-full rounded-3xl px-4 sm:px-6 py-2 sm:py-3 text-lg sm:text-2xl">
+                                        class="boton w-full rounded-3xl px-4 sm:px-6 py-3 sm:py-3 text-lg sm:text-2xl">
                                         Finalizar compra
                                     </button>
                                 </div>

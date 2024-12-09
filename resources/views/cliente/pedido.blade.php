@@ -91,7 +91,8 @@
                             </div>
                             <div>
                                 <label class="block text-xl font-semibold text-gray-700 mb-2">Nombres Completos *</label>
-                                <input type="text" name="nombre" placeholder="Ingrese sus nombres"
+                                <input type="text" name="nombre" value=" {{ auth()->user()->name }}"
+                                    placeholder="Ingrese sus nombres"
                                     class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-300" required>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -107,7 +108,8 @@
                                     <div>
                                         <label class="block text-xl font-semibold text-gray-700 mb-2">Correo electrónico
                                             *</label>
-                                        <input type="email" name="email" placeholder="Ingrese su correo"
+                                        <input type="email" name="email" value="{{ auth()->user()->email }}"
+                                            placeholder="Ingrese su correo"
                                             class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-300"
                                             required>
                                     </div>
@@ -226,6 +228,8 @@
         </div>
     </section>
 
+
+
     <!-- Incluir el SDK de Mercado Pago -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
 
@@ -273,48 +277,169 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Inicializar Mercado Pago con tu clave pública
-            const mp = new MercadoPago("{{ config('services.mercadopago.public_key') }}");
+            const form = document.getElementById('payment-form');
+            const deliveryOptions = document.querySelectorAll('input[name="opcion_envio"]');
+            const envioDomicilioFields = document.getElementById('envioDomicilioFields');
 
-            document.getElementById('pay-button').addEventListener('click', function() {
-                // Recopila datos básicos
-                const productos = [
-                    @foreach ($productos as $producto)
-                        {
-                            id: "{{ $producto->id }}",
-                            title: "{{ $producto->nombre }}",
-                            quantity: {{ $carrito[$producto->id]['cantidad'] }},
-                            unit_price: {{ $producto->precio }}
-                        },
-                    @endforeach
-                ];
+            // Function to validate the entire form
+            function validateForm() {
+                // Basic field validations
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
 
-                // Enviar datos para crear preferencia
-                fetch('{{ route('create.preference') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            productos: productos
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(preference => {
-                        // Abrir el checkout de Mercado Pago
-                        mp.checkout({
-                            preference: {
-                                id: preference.id
-                            },
-                            autoOpen: true
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('No se pudo procesar el pago');
+                // Reset previous error messages
+                document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+                // Check all required fields
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        showError(field, 'Este campo es obligatorio');
+                        isValid = false;
+                    }
+                });
+
+                // Validate telephone number
+                const telefonoInput = form.querySelector('input[name="telefono"]');
+                if (telefonoInput.value.trim() && !/^\d{9}$/.test(telefonoInput.value)) {
+                    showError(telefonoInput, 'Ingrese un número de teléfono válido de 9 dígitos');
+                    isValid = false;
+                }
+
+                // Validate DNI
+                const dniInput = form.querySelector('input[name="dni"]');
+                if (dniInput.value.trim() && !/^\d{8}$/.test(dniInput.value)) {
+                    showError(dniInput, 'Ingrese un DNI válido de 8 dígitos');
+                    isValid = false;
+                }
+
+                // Check if delivery is selected
+                const deliveryOption = document.querySelector('input[name="opcion_envio"]:checked').id;
+                if (deliveryOption === 'enviar') {
+                    // Additional validation for delivery option
+                    const direccionInput = form.querySelector('input[name="direccion"]');
+                    const referenciaInput = form.querySelector('input[name="referencia"]');
+
+                    if (!direccionInput.value.trim()) {
+                        showError(direccionInput, 'La dirección es obligatoria para envío a domicilio');
+                        isValid = false;
+                    }
+
+                    if (!referenciaInput.value.trim()) {
+                        showError(referenciaInput, 'La referencia es obligatoria para envío a domicilio');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            }
+
+            // Function to show error messages
+            function showError(field, message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message text-red-500 text-sm mt-1';
+                errorDiv.textContent = message;
+
+                // Insert error message after the input
+                field.parentNode.insertBefore(errorDiv, field.nextSibling);
+
+                // Highlight the input field
+                field.classList.add('border-red-500');
+
+                // Remove highlight when user starts typing
+                field.addEventListener('input', function() {
+                    this.classList.remove('border-red-500');
+                    const errorMsg = this.parentNode.querySelector('.error-message');
+                    if (errorMsg) errorMsg.remove();
+                });
+            }
+
+            // Modify pay button to include validation
+            const payButton = document.getElementById('pay-button');
+            payButton.addEventListener('click', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    Swal2.fire({
+                        icon: 'error',
+                        title: 'Erro de Validación',
+                        text: 'Por favor complete todos los campos obligatorios correctamente.',
+                        confirmButtonText: 'Entendido'
                     });
+                    return false;
+                }
+
+                // If validation passes, proceed with payment
+                // The existing Mercado Pago logic will handle the payment
             });
+
+            // Toggle delivery fields visibility and validation
+            deliveryOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    const isDelivery = this.id === 'enviar';
+
+                    // Toggle delivery fields
+                    const direccionInput = form.querySelector('input[name="direccion"]');
+                    const referenciaInput = form.querySelector('input[name="referencia"]');
+
+                    if (isDelivery) {
+                        envioDomicilioFields.classList.remove('hidden');
+                        direccionInput.setAttribute('required', 'required');
+                        referenciaInput.setAttribute('required', 'required');
+                    } else {
+                        envioDomicilioFields.classList.add('hidden');
+                        direccionInput.removeAttribute('required');
+                        referenciaInput.removeAttribute('required');
+                    }
+                });
+            });
+        
+
+
+
+
+
+
+        const mp = new MercadoPago("{{ config('services.mercadopago.public_key') }}");
+
+        document.getElementById('pay-button').addEventListener('click', function() {
+        // Recopila datos básicos
+        const productos = [
+            @foreach ($productos as $producto)
+                {
+                    id: "{{ $producto->id }}",
+                    title: "{{ $producto->nombre }}",
+                    quantity: {{ $carrito[$producto->id]['cantidad'] }},
+                    unit_price: {{ $producto->precio }}
+                },
+            @endforeach
+        ];
+
+        // Enviar datos para crear preferencia
+        fetch('{{ route('create.preference') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content')
+                },
+                body: JSON.stringify({
+                    productos: productos
+                })
+            })
+            .then(response => response.json())
+            .then(preference => {
+                // Abrir el checkout de Mercado Pago
+                mp.checkout({
+                    preference: {
+                        id: preference.id
+                    },
+                    autoOpen: true
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('No se pudo procesar el pago');
+            });
+        });
         });
     </script>
 
@@ -322,4 +447,45 @@
         const mp = new MercadoPago("{{ config('services.mercadopago.public_key') }}");
         console.log("Public Key:", "{{ config('services.mercadopago.public_key') }}");
     </script>
+
+
+
+
+
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            animation: shake 0.5s;
+        }
+
+        .border-red-500 {
+            border-color: red;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+
 @endsection

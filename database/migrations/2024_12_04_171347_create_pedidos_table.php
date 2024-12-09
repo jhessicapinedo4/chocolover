@@ -13,7 +13,7 @@ return new class extends Migration
   {
     Schema::create('pedidos', function (Blueprint $table) {
       $table->id();
-      $table->foreignId('cliente_id')->constrained()->onDelete('cascade'); 
+      $table->foreignId('cliente_id')->constrained('cliente')->onDelete('cascade'); 
       $table->enum('tipo_envio', ['recoger', 'domicilio']);
       $table->date('fecha_entrega');
       $table->string('hora_entrega');
@@ -26,6 +26,7 @@ return new class extends Migration
       $table->foreignId('cupon_id')->nullable()->constrained('cupones')->onDelete('set null');
       $table->timestamps();
     });
+  
   }
 
   /**

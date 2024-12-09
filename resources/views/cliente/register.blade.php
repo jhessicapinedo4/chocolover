@@ -17,7 +17,7 @@
 
                 <!-- Nombre -->
                 <div class="formmulario-grupo">
-                    <label for="name">Nombre</label>
+                    <label for="name">Nombres y apellidos</label>
                     <input
                         id="name"
                         type="text"
@@ -28,18 +28,7 @@
                     />
                 </div>
 
-                <!-- Apellidos -->
-                <div class="formmulario-grupo">
-                    <label for="lastname">Apellidos</label>
-                    <input
-                        id="lastname"
-                        type="text"
-                        name="lastname"
-                        value="{{ old('lastname') }}"
-                        required="required"
-                        placeholder="Escriba sus apellidos"
-                    />
-                </div>
+     
 
                 <!-- Email -->
                 <div class="formmulario-grupo">

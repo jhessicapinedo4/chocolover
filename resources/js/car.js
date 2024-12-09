@@ -47,31 +47,47 @@ document.addEventListener("DOMContentLoaded", function () {
                 }" style="height: 75px; width: 75px; object-fit: cover;">
                     </div>
                     <div class="flex-1">
-                        <div class="flex justify-between font-medium text-gray-900">
-                            <h3>${product.nombre}</h3>
-                            <p class="text-xl font-bold text-gray-800">S/. ${subtotal.toFixed(
-                                2
-                            )}</p>
-                        </div>
-                        <div class="flex items-center justify-between mt-3">
-                            <div class="quantity-selector flex items-center gap-1">
-                                <button class="decrease-quantity"   id="decrement-{{ $id }}
-                                ">-</button>
+    <div class="flex justify-between items-center font-medium text-gray-900 flex-wrap">
+    <!-- Nombre del producto -->
+    <h3 class="w-full sm:w-auto text-2xl sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-0">
+        ${product.nombre}
+    </h3>
 
-                                <span class="border px-3 py-1 text-lg" name="cantidad"  value="{{ $detalles['cantidad'] }}">${
-                                    product.cantidad
-                                }</span>
-                                
-                                <button class="increase-quantity" id="increment-{{ $id }}
-                                ">+</button>
-                            </div>
-                            <button class="text-red-600 remove-product" data-id="${
-                                product.id
-                            }">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
-                        </div>
-                    </div>
+    <!-- Precio -->
+    <p class="text-xl font-bold text-gray-800">
+        S/. ${subtotal.toFixed(2)}
+    </p>
+</div>
+
+    <div class="flex items-center justify-between mt-3">
+        <div class="quantity-selector flex items-center gap-1">
+            <!-- Botón Disminuir -->
+            <button class="decrease-quantity bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-full w-8 h-8 flex items-center justify-center transition duration-200 ease-in-out" id="decrement-{{ $id }}">
+                -
+            </button>
+
+            <!-- Input de cantidad -->
+            <input 
+                type="text" 
+                class="quantity-input text-center border-2 border-gray-300 rounded-lg w-12 h-8 text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200" 
+                name="cantidad" 
+                value="${product.cantidad}" 
+                readonly
+            />
+
+            <!-- Botón Incrementar -->
+            <button class="increase-quantity bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-full w-8 h-8 flex items-center justify-center transition duration-200 ease-in-out" id="increment-{{ $id }}">
+                +
+            </button>
+        </div>
+        <button class="remove-product text-red-600 hover:text-red-800 transition duration-200" data-id="${
+            product.id
+        }">
+            <i class="bi bi-trash3-fill"></i>
+        </button>
+    </div>
+</div>
+
                 `;
                 cartProducts.appendChild(li);
             });

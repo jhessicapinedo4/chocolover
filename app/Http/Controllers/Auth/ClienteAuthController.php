@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ClienteAuthController extends Controller
 {
@@ -59,29 +60,43 @@ class ClienteAuthController extends Controller
 
   public function login(Request $request)
   {
-    $credentials = $request->validate([
+    // Validate the input first
+    $request->validate([
       'email' => 'required|email',
       'password' => 'required',
     ]);
 
-    $credentials['role'] = 'cliente';
+    // Check if the user exists
+    $user = User::where('email', $request->email)->first();
 
-    if (Auth::attempt($credentials)) {
+    // If no user found
+    if (!$user) {
+      throw ValidationException::withMessages([
+        'email' => ['No tenemos un usuario registrado con este correo electrónico.'],
+      ]);
+    }
+
+    // Check if the user is a cliente
+    if ($user->role !== 'cliente') {
+      throw ValidationException::withMessages([
+        'email' => ['Esta cuenta no tiene permisos de cliente.'],
+      ]);
+    }
+
+    // Attempt to authenticate
+    if (Auth::attempt([
+      'email' => $request->email,
+      'password' => $request->password,
+      'role' => 'cliente'
+    ])) {
       $request->session()->regenerate();
       return redirect()->route('cliente.dashboard');
     }
 
-    return back()->withErrors([
-      'email' => 'Las credenciales no coinciden.',
+    // If password is incorrect
+    throw ValidationException::withMessages([
+      'password' => ['La contraseña ingresada es incorrecta.'],
     ]);
-  }
-
-  public function logout(Request $request)
-  {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/');
   }
 
   

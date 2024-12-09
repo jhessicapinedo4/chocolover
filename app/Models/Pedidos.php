@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ArticulosPedido;
 
 class Pedidos extends Model
 {
@@ -17,25 +18,22 @@ class Pedidos extends Model
     'monto_total',
     'mensaje',
     'estado',
+    'mercado_pago_preference_id',
     'pedido_enviado',
     'cupon_id',
-    
   ];
 
-  // Relación con Cliente
   public function cliente()
   {
     return $this->belongsTo(Cliente::class);
   }
 
-  // Relación con Cupon
   public function cupon()
   {
     return $this->belongsTo(Cupon::class);
   }
 
-  // Relación con ArticulosPedidos
-  public function articulosPedidos()
+  public function articulos()
   {
     return $this->hasMany(ArticulosPedido::class);
   }

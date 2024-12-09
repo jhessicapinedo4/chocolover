@@ -1258,13 +1258,39 @@ main {
   font-weight: 300;
 }
 
+/* Estilo base */
 .container-details-product {
   padding: 30px 0;
 }
 
+/* Estilo para pantallas pequeñas (menos de 768px) */
+@media (max-width: 768px) {
+  .container-details-product {
+    padding: 20px 0; /* Reducimos el padding superior e inferior en pantallas medianas */
+  }
+}
 
+/* Estilo para pantallas muy pequeñas (menos de 480px) */
+@media (max-width: 480px) {
+  .container-details-product {
+    margin-top: 120px;
+    padding: 15px 0; /* Aún más pequeño para pantallas muy pequeñas */
+  }
+}
 
+.unete {
+    text-decoration: underline; /* Agrega la línea debajo del texto */
+    color: #007bff; /* El color del enlace (puedes cambiarlo si lo deseas) */
+    font-weight: bold; /* Estilo en negrita para el texto */
+    cursor: pointer; /* Cambia el cursor para indicar que es un enlace */
+}
 
+.unete:hover {
+    color: #0056b3; /* Cambia el color cuando el usuario pase el mouse por encima */
+    text-decoration: underline; /* Mantiene la línea debajo al pasar el ratón */
+}
+
+/* Estilo base */
 .form-group {
   display: flex;
   align-items: center;
@@ -1279,7 +1305,8 @@ main {
   font-weight: 700;
 }
 
-.form-group select, textarea {
+.form-group select, 
+.form-group textarea {
   width: 300px;
   border: none;
   padding: 12px 15px;
@@ -1287,6 +1314,67 @@ main {
   outline: none;
   color: #222;
   margin-top: 8px;
+}
+
+/* Estilo para pantallas pequeñas (por debajo de 768px) */
+@media (max-width: 768px) {
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-group label {
+    width: auto; /* La etiqueta no necesita un ancho fijo */
+    margin-bottom: 5px; /* Un pequeño margen para separar de los campos */
+  }
+
+  .form-group select, 
+  .form-group textarea {
+    width: 50%; /* Los campos ocuparán el 100% del ancho disponible */
+    padding: 10px;
+  }
+
+  .form-group textarea {
+    height: 120px; /* Ajusta la altura del textarea */
+  }
+}
+
+/* Estilo para pantallas aún más pequeñas (menos de 480px) */
+@media (max-width: 480px) {
+  .form-group {
+    gap: 10px; /* Reducimos el espacio entre los elementos */
+  }
+
+  .form-group label {
+    font-size: 12px; /* Reducimos el tamaño de la fuente de las etiquetas */
+    margin-bottom: 3px; /* Menor margen entre la etiqueta y el campo */
+  }
+
+  .form-group select, 
+  .form-group textarea {
+    width: 100%; /* Los campos ocupan el 100% del ancho */
+    padding: 8px; /* Reducimos el padding */
+  }
+
+  .form-group textarea {
+    height: 100px; /* Menos altura para el textarea */
+  }
+}
+
+/* Estilo para pantallas grandes (mayores a 768px) */
+@media (min-width: 769px) {
+  .form-group {
+    flex-direction: row; /* Mantiene los elementos en línea */
+  }
+
+  .form-group label {
+    width: 100px; /* Fija el ancho de la etiqueta */
+  }
+
+  .form-group select, 
+  .form-group textarea {
+    width: 300px; /* Los campos mantienen el ancho de 300px */
+  }
 }
 
 
@@ -1426,9 +1514,6 @@ main {
     flex-direction: column;
   }
 
-  .form-group select {
-    width: 85%;
-  }
 
   .container-add-cart {
     align-items: center;

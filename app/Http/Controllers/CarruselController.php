@@ -111,7 +111,7 @@ class CarruselController extends Controller
     // Actualizar el carrusel en la base de datos
     $carrusel->update($data);
 
-    return redirect()->route('Admin.carrusel.index')->with('success', 'Carrusel actualizado correctamente.');
+    return redirect()->route('carrusel.index')->with('success', 'Carrusel actualizado correctamente.');
   }
 
   /**

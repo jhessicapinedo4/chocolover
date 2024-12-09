@@ -37,7 +37,7 @@ class ProfileController extends Controller
 
     $request->user()->save();
 
-    return Redirect::route('profile_admin.edit')->with('status', 'profile-updated');
+    return Redirect::route('profile_admin.edit')->with('status', 'Perfil actualizado correctamente');
     Mail::to('jhessicapinedo@gamil.com')->send(new UserEmail);
   }
 
@@ -85,7 +85,7 @@ class ProfileController extends Controller
 
     $request->user()->save();
 
-    return Redirect::route('profile_cliente.edit')->with('status', 'profile-updated');
+    return Redirect::route('profile_cliente.edit')->with('status', 'Perfil actualizado correctamente');
     Mail::to('jhessicapinedo@gamil.com')->send(new UserEmail);
   }
 

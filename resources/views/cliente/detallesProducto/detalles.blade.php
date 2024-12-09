@@ -6,7 +6,7 @@
 @extends('layouts.header')
 
 @section('content')
-    <div>
+    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
 
         <svg class="d-none">
             <symbol id="icon_star" viewBox="0 0 9 9">
@@ -20,30 +20,40 @@
                 <a href="{{ route('productos.index') }}" class="back-button"></i></a>
                 {{ $producto->nombre }}
             </div>
+
+            
         </section>
+
+    
+      
         <main class="pt-2">
-            <div class="mb-md-1 pb-md-3"></div>
+
+          
+          
+
             <section class="product-single container">
 
                 <div class="row">
                     <div class="col-lg-7">
-                        <div class="product-single__media">
-                            <div class="product-single__image">
-                                <div class="imagen">
-                                    <!-- Hacemos la imagen responsiva usando clases de Tailwind -->
-                                    <img class="w-full h-auto object-cover"
-                                        src="{{ asset('imagenes/productos/' . $producto->imagen) }}"
-                                        alt="{{ $producto->nombre }}" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="product-single__media">
+        <div class="product-single__image">
+            <div class="imagen">
+                <!-- Hacemos la imagen responsiva usando clases de Tailwind -->
+                <img class="w-full h-auto object-cover"
+                    src="{{ asset('imagenes/productos/' . $producto->imagen) }}"
+                    alt="{{ $producto->nombre }}" />
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
 
                     <div class="col-lg-5">
                         <h1 class="product-single__name">{{ $producto->nombre }}</h1>
+
+
                         <div class="product-single__rating">
                             <div class="product-single__rating">
                                 <x-estrellas-calificacion :producto="$producto" />
@@ -90,22 +100,27 @@
                         <div class="product-single__addtocart">
                             <div class="qty-control position-relative">
                                 <input type="number" id="qty-control" name="quantity" value="1" min="1"
-                                    class="qty-control__number text-center">
+                                    class="qty-control__number text-center" onchange="updateHiddenQuantity()">
+
                                 <div class="qty-control__reduce" onclick="changeQuantity(-1)">-</div>
                                 <div class="qty-control__increase" onclick="changeQuantity(1)">+</div>
                             </div>
-                            <form action="{{ route('carrito.agregar') }}" method="POST" onsubmit="updateQuantity()">
+
+                            <form action="{{ route('carrito.agregar') }}" method="POST" onsubmit="updateHiddenQuantity()">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $producto->id }}">
                                 <input type="hidden" name="quantity" id="quantity-input" value="1">
+                                <!-- Inicializa con el valor del input -->
 
                                 <button data-product-id="{{ $producto->id }}" type="submit"
-                                    class="btn-add-to-cart w-full sm:w-auto px-6 py-3 mt-2   font-semibold rounded-md  transition-colors duration-200">
+                                    class="btn-add-to-cart w-full sm:w-auto px-6 py-3 mt-2 font-semibold rounded-md transition-colors duration-200">
                                     Agregar al carrito
                                 </button>
                             </form>
-
                         </div>
+
+
+
                         <div class="container-social" style="font-size: 10px">
                             <div class="meta-item">
                                 <label>Categoría:</label>
@@ -201,21 +216,23 @@
             });
         </script>
         <script>
-            // Función para cambiar la cantidad
-            function changeQuantity(delta) {
-                var qtyInput = document.getElementById('qty-control');
-                var currentQty = parseInt(qtyInput.value);
-                var newQty = currentQty + delta;
-                if (newQty < 1) {
-                    newQty = 1; // Evita que la cantidad sea menor a 1
-                }
-                qtyInput.value = newQty;
-            }
+            // Función para actualizar el campo hidden con el valor del campo de cantidad
+            function updateHiddenQuantity() {
+                var qtyControl = document.getElementById('qty-control');
+                var quantityInput = document.getElementById('quantity-input');
 
-            // Función para sincronizar la cantidad antes de enviar el formulario
-            function updateQuantity() {
-                var visibleQty = document.getElementById('qty-control').value;
-                document.getElementById('quantity-input').value = visibleQty;
+                // Asigna el valor del campo qty-control al campo quantity-input
+                quantityInput.value = qtyControl.value;
+            }
+            function changeQuantity(amount) {
+                var qtyControl = document.getElementById('qty-control');
+                var newQuantity = parseInt(qtyControl.value) + amount;
+
+                // Asegúrate de que el valor sea mayor o igual a 1
+                if (newQuantity >= 1) {
+                    qtyControl.value = newQuantity;
+                    updateHiddenQuantity(); 
+                }
             }
         </script>
     @endpush

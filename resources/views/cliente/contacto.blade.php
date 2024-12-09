@@ -1,7 +1,7 @@
 @extends('layouts.header')
 
 @section('content')
-    <!-- LA PARTE DE CONTACTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO -->
+
     <section id="contacto"  style="
         display: flex; 
         justify-content: center; 

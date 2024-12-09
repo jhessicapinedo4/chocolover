@@ -7,7 +7,7 @@
             <div class="form-header">
                 <h1>{{ __('Iniciar Sesión') }}</h1>
                 <h2 class="n-cuenta">
-                    ¿No tienes cuenta aún? 
+                    ¿No tienes cuenta aún?
                     <a href="{{ route('cliente.register') }}" class="unete">UNETE AHORA</a>
                 </h2>
             </div>
@@ -18,20 +18,29 @@
                     <!-- Email Address -->
                     <div class="formmulario-grupo">
                         <label for="email">{{ __('Correo electrónico') }}</label>
-                        <input id="email" 
-                               type="email" 
-                               name="email" 
-                               required="required" 
-                               value="{{ old('email') }}" />
+                        <input id="email" type="email" name="email" required="required"
+                            placeholder="Ingrese su correo electronico aquì" value="{{ old('email') }}" />
+
+                        @error('email')
+                            <div class="error-message text-red-500">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <!-- Password -->
                     <div class="formmulario-grupo">
                         <label for="password">{{ __('Contraseña') }}</label>
-                        <input id="password" 
-                               type="password" 
-                               name="password" 
-                               required="required" />
+                        <input id="password" type="password" name="password" required="required"
+                            placeholder="Ingrese su contraseña" />
+                        @error('password')
+                            <div class="error-message text-red-500">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ $message }}
+                            </div>
+                        @enderror
+
                     </div>
 
                     <!-- Remember Me -->
@@ -39,7 +48,10 @@
                         <label class="form-remember">
                             <input type="checkbox" name="remember" /> {{ __('Recordar') }}
                         </label>
-                        <a class="form-recovery" href="{{ route('password.request') }}">{{ __('¿Olvidaste tu contraseña?') }}</a>
+                        <a class="form-recovery"
+                            href="{{ route('password.request') }}">{{ __('¿Olvidaste tu contraseña?') }}</a>
+
+
                     </div>
 
                     <!-- Submit Button -->

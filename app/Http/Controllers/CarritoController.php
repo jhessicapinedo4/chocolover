@@ -37,6 +37,8 @@ class CarritoController extends Controller
     ]);
   }
 
+
+
   public function actualizarCantidad(Request $request)
   {
     $carrito = session()->get('carrito', 'pedido', 'detalles');
@@ -253,5 +255,10 @@ class CarritoController extends Controller
       'cuponAplicado' => $cuponAplicado,
     ]);
   }
+
+
+
+
+  
 
 }
